@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+</head>
+<body>
+
+
+<div th:fragment="post" class="card my-3" th:id="'post_'+${post.id}" >
+
+    <div class="card-header">
+        <h4 class="text-primary" th:text="${post.owner.name}"></h4>
+    </div>
+
+    <div class="card-body">
+
+        <p class="card-text" th:text="${post.content}">The post's content.</p>
+
+        <div class="text-right text-info">
+            Likes <span class="badge" th:text="${post.totalLikes}">1</span>
+        </div>
+
+
+
+        <button  th:classappend="${post.isLikedBy(currentUser)? 'btn-primary': 'btn-outline-primary'}" th:onclick="'like('+${post.id}+')'" class="btn  btn-block my-3">
+            <span><i class="fas fa-thumbs-up"></i> Like</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

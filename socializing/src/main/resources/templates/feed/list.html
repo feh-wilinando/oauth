@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed</title>
+</head>
+<body>
+
+<aside layout:fragment="aside-content">
+    <a class="btn btn-outline-primary" href="#" th:if="${movies.empty}">
+        Linking Movies Rating
+        <img style="width: 2em; height: 2em;" th:src="@{/assets/images/movies-rating-logo.svg}"/>
+    </a>
+
+
+    <table class="table text-center" th:if="${not movies.empty}">
+        <thead>
+        <th>Movie</th>
+        <th>Rating</th>
+        <th>Action</th>
+        </thead>
+        <tbody>
+        <tr th:each="id : ${#numbers.sequence(1,10)}">
+            <td th:text="'Wolverine ' + ${id}">Wolverine</td>
+            <td>5</td>
+            <td>
+                <a href="#" class="text-primary">
+                    post <i class="fas fa-share-square"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</aside>
+
+<main layout:fragment="content" class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-10 ">
+    <article class="d-flex justify-content-center mb-3">
+        <div class="col-md-6">
+
+            <form class="form" th:action="@{/feed}" method="post" th:object="${postForm}">
+
+                <div class="form-group">
+                    <textarea th:classappend="${#fields.hasErrors('content')? 'is-invalid': ''}" th:field="*{content}"
+                              class="form-control" placeholder="What are you thinking?" rows="5"></textarea>
+
+                    <div th:if="${#fields.hasErrors('content')}">
+                        <span class="text-danger" th:each="error : ${#fields.errors('content')}"
+                              th:text="${error}"></span>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-block">Post</button>
+            </form>
+        </div>
+    </article>
+
+    <article class="d-flex justify-content-center">
+        <div class="col-md-6">
+            <div th:each="post : ${posts}">
+                <div th:replace="~{components :: post(post=${post})}"></div>
+            </div>
+        </div>
+    </article>
+</main>
+<script layout:fragment="pre-body-script">
+    function like(id) {
+        let headers = new Headers();
+
+        headers.append('[[${_csrf.headerName}]]', '[[${_csrf.token}]]');
+
+        let request = {method: "PUT", headers: headers, credentials: "same-origin"}
+
+
+        fetch("/feed/" + id, request)
+            .then((response) => {
+                if (response.ok) {
+                    return response.text();
+                }
+
+                return Promise.reject("Server response http status: " + response.status);
+            })
+            .then((html) => {
+                let post = document.querySelector("#post_" + id);
+                post.outerHTML = html;
+            });
+
+    }
+</script>
+</body>
+</html>

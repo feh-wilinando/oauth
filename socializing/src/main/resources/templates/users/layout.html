@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+
+<main layout:fragment="content" class="col-md-4">
+
+
+    <div class="container text-center">
+
+        <h1 class="display-4 text-secondary">
+            <a style="text-decoration: none" href="/login">
+                <img th:src="@{/assets/images/logo.svg}">
+            </a>
+            Socializing
+        </h1>
+        <p class="lead text-secondary">with anything</p>
+    </div>
+
+    <div layout:fragment="user-content">
+    </div>
+
+</main>
+
+</body>
+</html>

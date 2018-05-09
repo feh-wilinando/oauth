@@ -1,0 +1,48 @@
+.form-control .field-union-top {
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.form-control .field-union-bottom {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.input-group .field-union-top {
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .field-union-bottom {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.password-icon {
+    width: 1em;
+    height: 1em;
+}
+
+.comment {
+    display: block;
+    background-color: #fff;
+    box-shadow: 0 1px 5px;
+    padding: 1em;
+}
+
+.integration {
+    position: absolute;
+    left: 10px;
+    margin-top: 20px;
+    top: 10%;
+    width: 25%;
+}
+
+@media (max-width: 1200px) {
+    .integration {
+        position: relative;
+        width: 90%;
+    }
+}
