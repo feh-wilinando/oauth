@@ -3,9 +3,11 @@ package br.com.caelum.oauth.moviesrating.configurations.security;
 import br.com.caelum.oauth.commons.configurations.security.LoginStrategy;
 import br.com.caelum.oauth.commons.configurations.security.SuccessLoginRedirectHandler;
 import br.com.caelum.oauth.commons.services.LoginService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -62,6 +64,12 @@ public class SecurityConfiguration {
         @Override
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().antMatchers("/assets/**").antMatchers("/webjars/**");
+        }
+
+        @Bean
+        @Override
+        protected AuthenticationManager authenticationManager() throws Exception {
+            return super.authenticationManager();
         }
     }
 
