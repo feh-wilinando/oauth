@@ -30,7 +30,7 @@ public class SecurityConfiguration {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             LoginStrategy loginStrategy = roles -> {
-                if (roles.contains("ROLE_MEMBER")) {
+                if (roles.contains("ROLE_ADMIN")) {
                     return "/admin/movies";
                 }
 
