@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>List</title>
+</head>
+<body>
+<main layout:fragment="content" class="col-md-6">
+
+<div class="alert alert-success alert-dismissible fade show" th:if="${#request.getAttribute('message') != null}">
+    <span th:text="${#request.getAttribute('message')}"></span>
+
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<a class="btn btn-primary mb-3" th:href="@{/admin/movies/new}">New</a>
+
+<table class="table table-hover">
+    <thead>
+        <th>Title</th>
+        <th class="text-center">Actions</th>
+    </thead>
+
+    <tbody>
+    <tr th:each="movie : ${movies}" th:id="'movie_'+${movie.id}">
+        <td th:text="${movie.title}">Start wars</td>
+        <td class="d-flex justify-content-around col-md-12">
+            <a th:href="@{/admin/movies/__${movie.id}__}">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+            <a href="#" th:onclick="'remove('+${movie.id}+')'" class="text-danger">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</main>
+<script layout:fragment="pre-body-script">
+    function remove(id) {
+        let headers = new Headers();
+
+        headers.append('[[${_csrf.headerName}]]', '[[${_csrf.token}]]');
+
+        fetch("/admin/movies/" + id, {method: "DELETE", headers: headers, credentials: "same-origin"})
+            .then( (response) => {
+                if (response.ok){
+                    let line = document.querySelector("#movie_" + id);
+                    line.parentNode.removeChild(line)
+                }
+            });
+
+    }
+</script>
+</body>
+</html>
