@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<main layout:fragment="content" class="col-md-4">
+
+
+    <div class="container text-center">
+
+        <h1 class="display-4 text-secondary">
+            <img style="width: 2em" th:src="@{/assets/images/movies-rating-logo.svg}"/>
+            Movies Rating
+        </h1>
+
+    </div>
+
+
+    <form th:action="@{/movies-rating-integration}" th:object="${loginForm}" method="post">
+        <div class="form-group">
+            <div  class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text field-union-top"><i class="fas fa-user"></i></span>
+                </div>
+                <input th:classappend="${#fields.hasErrors('username')? 'is-invalid': ''}" class="form-control field-union-top" th:field="*{username}" placeholder="Username">
+
+                <div th:if="${#fields.hasErrors('username')}">
+                    <span class="text-danger" th:each="error : ${#fields.errors('username')}" th:text="${error}"></span>
+                </div>
+            </div>
+
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text field-union-bottom"><i class="fas fa-key"></i></span>
+                </div>
+                <input th:classappend="${#fields.hasErrors('password')? 'is-invalid': ''}" class="form-control field-union-bottom" th:field="*{password}" type="password" placeholder="Password">
+
+                <div th:if="${#fields.hasErrors('password')}">
+                    <span class="text-danger" th:each="error : ${#fields.errors('password')}" th:text="${error}"></span>
+                </div>
+            </div>
+
+            <button class=" my-2 btn btn-info btn-block">
+                Linking Movies Rating
+                <img style="width: 2em; height: 2em;" th:src="@{/assets/images/movies-rating-logo.svg}"/>
+            </button>
+
+        </div>
+
+    </form>
+
+</main>
+</body>
+</html>

@@ -29,6 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/feel/**").hasRole("MEMBER")
+                    .antMatchers("/movies-rating-integration/**").hasRole("MEMBER")
                     .antMatchers("/sign-up/**").permitAll()
                 .anyRequest()
                     .authenticated().and()
