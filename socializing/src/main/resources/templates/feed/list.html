@@ -9,7 +9,7 @@
 <body>
 
 <aside layout:fragment="aside-content">
-    <a class="btn btn-outline-primary" href="#" th:if="${movies.empty}">
+    <a class="btn btn-outline-primary" th:href="@{/movies-rating-integration}" th:if="${movies.empty}">
         Linking Movies Rating
         <img style="width: 2em; height: 2em;" th:src="@{/assets/images/movies-rating-logo.svg}"/>
     </a>
@@ -22,11 +22,11 @@
         <th>Action</th>
         </thead>
         <tbody>
-        <tr th:each="id : ${#numbers.sequence(1,10)}">
-            <td th:text="'Wolverine ' + ${id}">Wolverine</td>
-            <td>5</td>
+        <tr th:each="movie : ${movies}">
+            <td th:text="${movie.title}">Wolverine</td>
+            <td th:text="${movie.rating}">5</td>
             <td>
-                <a href="#" class="text-primary">
+                <a href="#" class="text-primary" th:onclick="'shareMovie(\'' +${movie.toJson()} +'\')'">
                     post <i class="fas fa-share-square"></i>
                 </a>
             </td>
@@ -57,7 +57,7 @@
     </article>
 
     <article class="d-flex justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-6" th:id="posts">
             <div th:each="post : ${posts}">
                 <div th:replace="~{components :: post(post=${post})}"></div>
             </div>
@@ -85,6 +85,30 @@
                 let post = document.querySelector("#post_" + id);
                 post.outerHTML = html;
             });
+
+    }
+
+    function shareMovie(movie){
+
+        let headers = new Headers();
+
+        headers.append('[[${_csrf.headerName}]]', '[[${_csrf.token}]]');
+        headers.append('Content-Type', 'application/json');
+
+        let request = {method: "PUT", body: movie, headers: headers, credentials: "same-origin"}
+
+        fetch('/feed', request)
+            .then((response) => {
+                if (response.ok) {
+                    return response.text();
+                }
+
+                return Promise.reject("Server response http status: " + response.status);
+            })
+            .then((html) => {
+                let posts = document.querySelector('#posts');
+                posts.insertAdjacentHTML('afterBegin', html);
+            })
 
     }
 </script>

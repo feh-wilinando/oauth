@@ -1,5 +1,6 @@
 package br.com.caelum.oauth.socializing.controller;
 
+
 import br.com.caelum.oauth.socializing.models.Token;
 import br.com.caelum.oauth.socializing.repositories.Tokens;
 import br.com.caelum.oauth.socializing.services.AuthorizationCodeService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("movies-rating-integration")
 public class MoviesRatingIntegrationController {
-
 
     private AuthorizationCodeService authorizationCodeService;
     private Tokens tokens;
@@ -37,5 +37,6 @@ public class MoviesRatingIntegrationController {
 
         return "redirect:/feed";
     }
+
 
 }

@@ -3,15 +3,17 @@ package br.com.caelum.oauth.commons.models.vos;
 import org.springframework.util.Assert;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 
-@Embeddable
+@Entity
 public class Role {
 
     public static final Role MEMBER = new Role("ROLE_MEMBER");
     public static final Role ADMIN = new Role("ROLE_ADMIN");
 
-    @NotEmpty
+    @Id
     private String name;
 
     /**

@@ -7,3 +7,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+server:
+  servlet:
+    session:
+      cookie:
+        name: movies

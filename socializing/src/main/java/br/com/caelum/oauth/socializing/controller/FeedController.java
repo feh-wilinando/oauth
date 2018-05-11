@@ -2,14 +2,15 @@ package br.com.caelum.oauth.socializing.controller;
 
 import br.com.caelum.oauth.commons.exceptions.AlreadyGoneException;
 import br.com.caelum.oauth.commons.exceptions.NoContentException;
-import br.com.caelum.oauth.commons.exceptions.NotFoundException;
 import br.com.caelum.oauth.commons.models.ResourceOwner;
 import br.com.caelum.oauth.commons.models.User;
+import br.com.caelum.oauth.socializing.dtos.Movie;
 import br.com.caelum.oauth.socializing.forms.PostForm;
 import br.com.caelum.oauth.socializing.models.Like;
 import br.com.caelum.oauth.socializing.models.Post;
 import br.com.caelum.oauth.socializing.repositories.Posts;
-import org.hibernate.mapping.Collection;
+import br.com.caelum.oauth.socializing.repositories.Tokens;
+import br.com.caelum.oauth.socializing.services.MovieServices;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,19 +27,30 @@ import java.util.List;
 public class FeedController {
 
     private Posts posts;
-
-    public FeedController(Posts posts) {
+    private Tokens tokens;
+    private MovieServices movieServices;
+    public FeedController(Posts posts, Tokens tokens, MovieServices movieServices) {
         this.posts = posts;
+        this.tokens = tokens;
+        this.movieServices = movieServices;
     }
 
     @GetMapping
-    public ModelAndView list(@AuthenticationPrincipal ResourceOwner owner, PostForm form){
+    public ModelAndView list(@AuthenticationPrincipal ResourceOwner resourceOwner, PostForm form){
         ModelAndView view = new ModelAndView("feed/list");
+
+        User owner = resourceOwner.unwrap();
 
         view.addObject("postForm", form);
         view.addObject("posts", posts.findAll(Sort.by(Sort.Direction.DESC, "createdDate")));
-        view.addObject("currentUser", owner.unwrap());
-        view.addObject("movies", List.of());
+        view.addObject("currentUser", owner);
+
+        List<Movie> movies = tokens.findByOwner(owner)
+                .map(movieServices::getAllByToken).orElse(List.of());
+
+        view.addObject("movies", movies);
+
+
 
         return view;
     }
@@ -57,6 +69,21 @@ public class FeedController {
 
         return new ModelAndView("redirect:/feed");
     }
+
+    @PutMapping
+    public ModelAndView saveMoviePost(@AuthenticationPrincipal ResourceOwner owner, @RequestBody Movie movie){
+        Post post = movie.toPost();
+
+        posts.save(post);
+
+        ModelAndView view = new ModelAndView("components :: post");
+
+        view.addObject("post", post);
+        view.addObject("currentUser", owner.unwrap());
+
+        return view;
+    }
+
 
 
     @Transactional

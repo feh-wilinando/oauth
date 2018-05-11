@@ -2,9 +2,7 @@ package br.com.caelum.oauth.commons.models.vos;
 
 import org.springframework.util.Assert;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Objects;
@@ -19,7 +17,7 @@ public class Credential {
     @NotEmpty
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Set<Role> roles = new HashSet<>();
 
     /**
