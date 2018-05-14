@@ -36,7 +36,7 @@ public class MovieServices {
             return response.getBody();
         }
 
-        throw new UnauthorizedException();
+        return List.of();
 
     }
 }
