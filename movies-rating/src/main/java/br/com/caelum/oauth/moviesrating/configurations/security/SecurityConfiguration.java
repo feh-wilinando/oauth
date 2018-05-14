@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                         .antMatchers("/sign-up/**").permitAll()
                         .anyRequest().authenticated().and()
                     .formLogin()
-//                        .successHandler(successRedirect)
+                        .successHandler(successRedirect)
                         .loginPage("/login").permitAll().and()
                     .logout()
                         .logoutRequestMatcher(logoutMatcher).permitAll();
