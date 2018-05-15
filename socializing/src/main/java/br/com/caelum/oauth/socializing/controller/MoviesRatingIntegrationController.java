@@ -23,7 +23,7 @@ public class MoviesRatingIntegrationController {
 
     @GetMapping
     public String authentication(){
-        return implicitGrantService.getEndpoint();
+        return "redirect:" + implicitGrantService.getEndpoint();
     }
 
 }

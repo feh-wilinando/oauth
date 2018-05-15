@@ -4,10 +4,12 @@ import br.com.caelum.oauth.commons.exceptions.UnauthorizedException;
 import br.com.caelum.oauth.socializing.dtos.Movie;
 import br.com.caelum.oauth.socializing.models.Token;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -29,12 +31,24 @@ public class MovieServices {
 
         ParameterizedTypeReference<List<Movie>> typeReference = new ParameterizedTypeReference<>() {};
 
-        ResponseEntity<List<Movie>> response = rest.exchange(request, typeReference);
+        try{
+            ResponseEntity<List<Movie>> response = rest.exchange(request, typeReference);
 
+            if (response.getStatusCode().is2xxSuccessful()){
+                return response.getBody();
+            }
 
-        if (response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+        }catch (HttpClientErrorException e){
+
+            if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
+                return List.of();
+            }else {
+                throw new RuntimeException(e);
+            }
+
         }
+
+
 
         return List.of();
 
