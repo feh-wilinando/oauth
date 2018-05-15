@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @SpringBootApplication
 public class MoviesRatingBoot {
@@ -21,10 +23,17 @@ public class MoviesRatingBoot {
     @Autowired
     private Users users;
 
+    @PersistenceContext
+    private EntityManager manager;
+
     @PostConstruct
     public void postConstruct(){
 
         if (!users.findByLogin("admin").isPresent()) {
+
+
+            manager.persist(Role.ADMIN);
+            manager.persist(Role.MEMBER);
 
             Password password = new Password("admin");
             Credential credential = new Credential("admin", password, Role.ADMIN);

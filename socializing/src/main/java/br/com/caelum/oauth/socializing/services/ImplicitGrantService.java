@@ -1,6 +1,5 @@
 package br.com.caelum.oauth.socializing.services;
 
-import br.com.caelum.oauth.commons.infra.services.BasicAuthentication;
 import org.apache.catalina.util.URLEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +11,11 @@ import java.util.stream.Collectors;
 public class ImplicitGrantService {
 
     public String getEndpoint(){
-        BasicAuthentication basicAuthentication = new BasicAuthentication("socializing", "123456");
-
-
         HashMap<String, String> parameters = new HashMap<>();
 
 
         parameters.put("response_type", "token");
-        parameters.put("client_id", basicAuthentication.getEncoded());
+        parameters.put("client_id", "socializing");
         parameters.put("redirect_uri", "http://localhost:8081/feed");
         parameters.put("scope", "read write");
 

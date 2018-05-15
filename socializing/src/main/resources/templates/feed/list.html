@@ -9,13 +9,13 @@
 <body>
 
 <aside layout:fragment="aside-content">
-    <a class="btn btn-outline-primary" th:href="@{/movies-rating-integration}" th:if="${movies.empty}">
+    <a id="integration-link" class="btn btn-outline-primary" th:href="@{/movies-rating-integration}">
         Linking Movies Rating
         <img style="width: 2em; height: 2em;" th:src="@{/assets/images/movies-rating-logo.svg}"/>
     </a>
 
 
-    <table class="table text-center" th:if="${not movies.empty}">
+    <table id="movies" class="table text-center hide">
         <thead>
         <th>Movie</th>
         <th>Rating</th>
@@ -65,6 +65,63 @@
     </article>
 </main>
 <script layout:fragment="pre-body-script">
+
+
+    window.onload = () => {
+
+        let fragment = window.location.hash.substring(1);
+
+        let response = {};
+        fragment.split("&").map(v => v.split("=")).forEach(value => response[value[0]] = value[1]);
+
+        if( response.hasOwnProperty("access_token") ){
+
+            $.ajax({
+               method: 'GET',
+                headers: {
+                    'authorization': 'Bearer ' + response.access_token,
+                    'Accept': 'application/json'
+                },
+
+                url: "http://localhost:8080/api/v2/ratings",
+                success: (movies) => {
+
+                   window.movies = movies;
+
+
+                   let link = $("#integration-link");
+                   link.addClass('hide');
+
+                   let table = $("#movies");
+
+                   table.removeClass('hide');
+
+                   movies.forEach((movie) => {
+
+                       let tbody = table.find('tbody');
+
+                       const { movie:title, rating } = movie;
+
+                        let tr = $(` <tr>
+                            <td>${title}</td>
+                            <td>${rating}</td>
+                            <td>
+                                <a href="#" class="text-primary" onclick="shareMovie('${title}')">
+                                    post <i class="fas fa-share-square"></i>
+                                </a>
+                            </td>
+                        </tr>`);
+
+                        tbody.append(tr);
+                   })
+
+                }
+            });
+
+        }
+
+    };
+
     function like(id) {
         let headers = new Headers();
 
@@ -88,14 +145,15 @@
 
     }
 
-    function shareMovie(movie){
-
+    function shareMovie(title){
         let headers = new Headers();
+
+        let movie = window.movies.find(m => m.movie === title);
 
         headers.append('[[${_csrf.headerName}]]', '[[${_csrf.token}]]');
         headers.append('Content-Type', 'application/json');
 
-        let request = {method: "PUT", body: movie, headers: headers, credentials: "same-origin"}
+        let request = {method: "PUT", body: JSON.stringify(movie), headers: headers, credentials: "same-origin"}
 
         fetch('/feed', request)
             .then((response) => {

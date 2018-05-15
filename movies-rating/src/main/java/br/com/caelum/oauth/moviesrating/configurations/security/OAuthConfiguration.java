@@ -32,7 +32,9 @@ public class OAuthConfiguration {
         public void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()
-                                .antMatchers("/api/v2/**").authenticated();
+                    .anyRequest().authenticated().and()
+                        .requestMatchers().antMatchers("/api/v2/**").and().cors();
+
         }
     }
 

@@ -4,6 +4,7 @@ import br.com.caelum.oauth.commons.models.ResourceOwner;
 import br.com.caelum.oauth.moviesrating.projections.MovieRating;
 import br.com.caelum.oauth.moviesrating.repository.Ratings;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping({"api", "/api/v2"})
+@CrossOrigin("*")
 public class RatingRestController {
 
     private final Ratings ratings;
