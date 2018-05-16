@@ -22,7 +22,7 @@ public class RatingRestController {
     }
 
     @GetMapping("ratings")
-    @PreAuthorize(value = "#oauth2.hasScope('read')")
+    @PreAuthorize(value = "#oauth2.hasScope('read') and hasRole('MEMBER')")
     public List<MovieRating> list(@AuthenticationPrincipal ResourceOwner owner){
         return ratings.findAllByOwner(owner.unwrap(), MovieRating.class);
     }
