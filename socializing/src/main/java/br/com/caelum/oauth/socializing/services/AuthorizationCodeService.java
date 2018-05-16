@@ -73,9 +73,8 @@ public class AuthorizationCodeService {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             OAuthToken token = response.getBody();
-            String accessToken = token.getAccessToken();
 
-            return new Token(accessToken);
+            return new Token(token.getAccessToken(), token.getRefreshToken());
         }
 
         throw new UnauthorizedException("Fail to retrieve oauth token");

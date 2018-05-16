@@ -8,35 +8,69 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovieServices {
 
-    public List<Movie> getAllByToken(Token token){
+    private final RefreshTokenService refreshTokenService;
+
+    public MovieServices(RefreshTokenService refreshTokenService) {
+        this.refreshTokenService = refreshTokenService;
+    }
+
+    public List<Movie> getAllByToken(Token token) {
+
+        Optional<ResponseEntity<List<Movie>>> optionalListResponse = request(token);
+
+
+        ResponseEntity<List<Movie>> response = optionalListResponse.orElseGet(() -> refreshToken(token));
+
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        }
+
+        throw new UnauthorizedException();
+
+
+    }
+
+    private ResponseEntity<List<Movie>> refreshToken(Token token) {
+        refreshTokenService.refresh(token);
+
+        return request(token).orElseThrow(UnauthorizedException::new);
+    }
+
+    private Optional<ResponseEntity<List<Movie>>> request(Token token) {
 
         RestTemplate rest = new RestTemplate();
 
         URI url = URI.create("http://localhost:8080/api/v2/ratings");
 
         RequestEntity<Void> request = RequestEntity.get(url)
-                                        .accept(MediaType.APPLICATION_JSON)
-                                        .header("Authorization", "Bearer " + token.getValue())
-                                        .build();
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token.getAccessToken())
+                .build();
 
-        ParameterizedTypeReference<List<Movie>> typeReference = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<List<Movie>> returnType = new ParameterizedTypeReference<>() {};
 
-        ResponseEntity<List<Movie>> response = rest.exchange(request, typeReference);
+        try {
+            ResponseEntity<List<Movie>> response = rest.exchange(request, returnType);
 
+            return Optional.of(response);
 
-        if (response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
+        } catch (HttpClientErrorException e) {
+
+            System.err.println(e.getMessage());
+            System.err.println(e.getLocalizedMessage());
+
+            return Optional.empty();
         }
-
-        throw new UnauthorizedException();
-
     }
 }

@@ -1,5 +1,6 @@
 package br.com.caelum.oauth.moviesrating.configurations.security;
 
+import br.com.caelum.oauth.commons.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,20 +45,26 @@ public class OAuthConfiguration {
         @Autowired
         private AuthenticationManager manager;
 
+        @Autowired
+        private LoginService loginService;
+
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients
                     .inMemory()
                         .withClient("socializing")
                         .secret("{noop}123456")
-                        .authorizedGrantTypes("authorization_code")
+                        .authorizedGrantTypes("authorization_code", "refresh_token")
                         .scopes("read", "write")
+                        .accessTokenValiditySeconds(120)
                         .resourceIds(RESOURCE_ID);
         }
 
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-            endpoints.authenticationManager(manager);
+            endpoints
+                    .authenticationManager(manager)
+                    .userDetailsService(loginService);
         }
     }
 }

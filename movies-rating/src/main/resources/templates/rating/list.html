@@ -25,9 +25,9 @@
         </thead>
 
         <tbody>
-        <tr th:each="value : ${ratings}" th:id="'rating_'+${value.id}">
+        <tr th:each="value : ${ratings}" th:id="'rating_'+${accessToken.id}">
             <td th:text="${value.movie.title}">Start wars</td>
-            <td th:text="${value.value}">4</td>
+            <td th:text="${value.accessToken}">4</td>
             <td class="d-flex justify-content-around col-md-12">
                 <a th:href="@{/ratings/__${value.id}__}" class="btn btn-link">
                     <i class="fas fa-pencil-alt"></i>

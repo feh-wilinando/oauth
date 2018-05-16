@@ -12,8 +12,8 @@ public class OAuthToken {
     @JsonProperty("expires_in")
     private String expiresIn;
 
-//    @JsonProperty("refresh_token")
-//    private String refreshToken;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
     public String getAccessToken() {
         return accessToken;
@@ -39,11 +39,11 @@ public class OAuthToken {
         this.expiresIn = expiresIn;
     }
 
-//    public String getRefreshToken() {
-//        return refreshToken;
-//    }
-//
-//    public void setRefreshToken(String refreshToken) {
-//        this.refreshToken = refreshToken;
-//    }
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

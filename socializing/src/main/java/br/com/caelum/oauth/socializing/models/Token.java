@@ -1,6 +1,7 @@
 package br.com.caelum.oauth.socializing.models;
 
 import br.com.caelum.oauth.commons.models.User;
+import br.com.caelum.oauth.socializing.dtos.OAuthToken;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,7 +19,9 @@ public class Token {
     @CreatedBy
     private User owner;
 
-    private String value;
+    private String accessToken;
+
+    private String refreshToken;
 
 
     /**
@@ -27,10 +30,14 @@ public class Token {
     @Deprecated(since = "1.0.0")
     public Token() { }
 
-    public Token(String value) {
-        this.value = value;
+    public Token(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
     public Long getId() {
         return id;
@@ -40,7 +47,13 @@ public class Token {
         return owner;
     }
 
-    public String getValue() {
-        return value;
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+
+    public void updateFromOAuthToken(OAuthToken token){
+        this.accessToken = token.getAccessToken();
+        this.refreshToken = token.getRefreshToken();
     }
 }

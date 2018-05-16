@@ -17,7 +17,7 @@ public class Credential {
     @NotEmpty
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
     /**
