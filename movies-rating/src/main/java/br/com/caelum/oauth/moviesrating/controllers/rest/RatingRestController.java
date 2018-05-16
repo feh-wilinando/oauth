@@ -3,6 +3,7 @@ package br.com.caelum.oauth.moviesrating.controllers.rest;
 import br.com.caelum.oauth.commons.models.ResourceOwner;
 import br.com.caelum.oauth.moviesrating.projections.MovieRating;
 import br.com.caelum.oauth.moviesrating.repository.Ratings;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class RatingRestController {
     }
 
     @GetMapping("ratings")
+    @PreAuthorize(value = "#oauth2.hasScope('read')")
     public List<MovieRating> list(@AuthenticationPrincipal ResourceOwner owner){
         return ratings.findAllByOwner(owner.unwrap(), MovieRating.class);
     }

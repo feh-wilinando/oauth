@@ -9,6 +9,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class MovieServices {
 
     private final RefreshTokenService refreshTokenService;
+    private UnauthorizedException lastExceptionThrown;
 
     public MovieServices(RefreshTokenService refreshTokenService) {
         this.refreshTokenService = refreshTokenService;
@@ -44,7 +46,7 @@ public class MovieServices {
     private ResponseEntity<List<Movie>> refreshToken(Token token) {
         refreshTokenService.refresh(token);
 
-        return request(token).orElseThrow(UnauthorizedException::new);
+        return request(token).orElseThrow(() -> lastExceptionThrown);
     }
 
     private Optional<ResponseEntity<List<Movie>>> request(Token token) {
@@ -65,10 +67,14 @@ public class MovieServices {
 
             return Optional.of(response);
 
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
 
+            System.err.println(e.getStatusCode());
+            System.err.println(e.getResponseHeaders());
+            System.err.println(e.getResponseBodyAsString());
             System.err.println(e.getMessage());
-            System.err.println(e.getLocalizedMessage());
+
+            lastExceptionThrown = new UnauthorizedException(e.getResponseBodyAsString());
 
             return Optional.empty();
         }
