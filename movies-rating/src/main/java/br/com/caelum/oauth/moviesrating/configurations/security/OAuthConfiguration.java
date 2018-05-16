@@ -47,9 +47,6 @@ public class OAuthConfiguration {
     class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 
         @Autowired
-        private AuthenticationManager manager;
-
-        @Autowired
         private LoginService loginService;
 
         @Autowired
@@ -76,7 +73,6 @@ public class OAuthConfiguration {
             requestFactory.setCheckUserScopes(true);
 
             endpoints
-                    .authenticationManager(manager)
                     .userDetailsService(loginService)
                     .requestFactory(requestFactory);
         }
