@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.config.annotation.builders.ClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -12,6 +13,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 
 @Configuration
 public class OAuthConfiguration {
@@ -48,6 +52,9 @@ public class OAuthConfiguration {
         @Autowired
         private LoginService loginService;
 
+        @Autowired
+        private ClientDetailsService clientDetails;
+
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
             clients
@@ -56,15 +63,22 @@ public class OAuthConfiguration {
                         .secret("{noop}123456")
                         .authorizedGrantTypes("authorization_code", "refresh_token")
                         .scopes("read", "write")
+                        .authorities("read", "write")
                         .accessTokenValiditySeconds(120)
                         .resourceIds(RESOURCE_ID);
         }
 
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+
+            DefaultOAuth2RequestFactory requestFactory = new DefaultOAuth2RequestFactory(clientDetails);
+
+            requestFactory.setCheckUserScopes(true);
+
             endpoints
                     .authenticationManager(manager)
-                    .userDetailsService(loginService);
+                    .userDetailsService(loginService)
+                    .requestFactory(requestFactory);
         }
     }
 }

@@ -20,6 +20,7 @@ public class ResourceOwner implements UserDetails {
                                     .stream()
                                         .map(Role::getName)
                                             .map(SimpleGrantedAuthority::new)
+                                                .peek(System.out::println)
                                                 .collect(Collectors.toSet());
     }
 
