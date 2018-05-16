@@ -25,14 +25,14 @@
         </thead>
 
         <tbody>
-        <tr th:each="value : ${ratings}" th:id="'rating_'+${accessToken.id}">
-            <td th:text="${value.movie.title}">Start wars</td>
-            <td th:text="${value.accessToken}">4</td>
+        <tr th:each="rating : ${ratings}" th:id="'rating_'+${rating.id}">
+            <td th:text="${rating.movie.title}">Start wars</td>
+            <td th:text="${rating.value}">4</td>
             <td class="d-flex justify-content-around col-md-12">
-                <a th:href="@{/ratings/__${value.id}__}" class="btn btn-link">
+                <a th:href="@{/ratings/__${rating.id}__}" class="btn btn-link">
                     <i class="fas fa-pencil-alt"></i>
                 </a>
-                <button type="button" href="#" th:onclick="'remove('+${value.id}+')'" class="btn btn-link text-danger">
+                <button type="button" href="#" th:onclick="'remove('+${rating.id}+')'" class="btn btn-link text-danger">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </td>

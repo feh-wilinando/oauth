@@ -2,9 +2,11 @@ package br.com.caelum.oauth.moviesrating.configurations.security;
 
 import br.com.caelum.oauth.commons.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.builders.ClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -15,7 +17,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.approval.ApprovalStore;
+import org.springframework.security.oauth2.provider.approval.JdbcApprovalStore;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class OAuthConfiguration {
@@ -52,17 +60,23 @@ public class OAuthConfiguration {
         @Autowired
         private ClientDetailsService clientDetails;
 
+        @Autowired
+        private DataSource dataSource;
+
+        @Bean
+        public TokenStore tokenStore(){
+            return new JdbcTokenStore(dataSource);
+        }
+
+        @Bean
+        public ApprovalStore approvalStore(){
+            return new JdbcApprovalStore(dataSource);
+        }
+
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            clients
-                    .inMemory()
-                        .withClient("socializing")
-                        .secret("{noop}123456")
-                        .authorizedGrantTypes("authorization_code", "refresh_token")
-                        .scopes("read", "write")
-                        .authorities("read", "write")
-                        .accessTokenValiditySeconds(120)
-                        .resourceIds(RESOURCE_ID);
+            clients.jdbc(dataSource);
+
         }
 
         @Override
@@ -74,7 +88,9 @@ public class OAuthConfiguration {
 
             endpoints
                     .userDetailsService(loginService)
-                    .requestFactory(requestFactory);
+                    .requestFactory(requestFactory)
+                    .approvalStore(approvalStore())
+                    .tokenStore(tokenStore());
         }
     }
 }

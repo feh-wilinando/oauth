@@ -4,12 +4,13 @@ import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Embeddable
-public class Credential {
+public class Credential implements Serializable {
 
     @NotEmpty
     private String login;

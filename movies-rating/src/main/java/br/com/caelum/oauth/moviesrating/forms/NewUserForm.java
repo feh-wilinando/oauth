@@ -60,7 +60,7 @@ public class NewUserForm {
 
         Password password = new Password(this.password);
 
-        Credential credential = new Credential(login, password, Role.MEMBER);
+        Credential credential = new Credential(login, password, Role.MEMBER, Role.READ);
 
         return new User(name, credential);
     }

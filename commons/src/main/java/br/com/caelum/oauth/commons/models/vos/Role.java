@@ -6,12 +6,14 @@ import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
 @Entity
-public class Role {
+public class Role implements Serializable {
 
     public static final Role MEMBER = new Role("ROLE_MEMBER");
     public static final Role ADMIN = new Role("ROLE_ADMIN");
+    public static final Role READ = new Role("read");
 
     @Id
     private String name;
